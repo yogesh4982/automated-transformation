@@ -3,7 +3,7 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 	<appender name="DEBUG_LOG" class="org.apache.log4j.RollingFileAppender">
 		<param name="File"
-			value="D:/Apparel/${logFileLocation}/${logFileLocation}_trace.log" />
+			value="D:/Apparel/trace.log" />
 		<param name="MaxFileSize" value="2MB" />
 		<param name="MaxBackupIndex" value="20" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -13,7 +13,7 @@
 	</appender>
 	<appender name="ERROR_LOG" class="org.apache.log4j.RollingFileAppender">
 		<param name="File"
-			value="D:/Apparel/${logFileLocation}/${logFileLocation}_error.log" />
+			value="D:/Apparel/error.log" />
 		<param name="MaxFileSize" value="2MB" />
 		<param name="MaxBackupIndex" value="20" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -28,7 +28,7 @@
 
 	<appender name="ERROR_DATA" class="org.apache.log4j.RollingFileAppender">
 		<param name="File"
-			value="D:/Apparel/${logFileLocation}/${logFileLocation}_error_data.log" />
+			value="D:/Apparel/error_data.log" />
 		<param name="MaxFileSize" value="2MB" />
 		<param name="MaxBackupIndex" value="20" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -43,7 +43,7 @@
 	
 	<appender name="P1_TICKET" class="org.apache.log4j.RollingFileAppender">
 		<param name="File"
-			value="D:/Apparel/${interfaceCode}_${logFileLocation}_error_p1ticket.log" />
+			value="D:/Apparel/error_p1ticket.log" />
 		<param name="MaxFileSize" value="2MB" />
 		<param name="MaxBackupIndex" value="20" />
 		<layout class="org.apache.log4j.PatternLayout">
