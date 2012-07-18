@@ -3,7 +3,7 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 	<appender name="DEBUG_LOG" class="org.apache.log4j.RollingFileAppender">
 		<param name="File"
-			value="D:/Apparel/trace.log" />
+			value="D:/Apparel/trace1.log" />
 		<param name="MaxFileSize" value="2MB" />
 		<param name="MaxBackupIndex" value="20" />
 		<layout class="org.apache.log4j.PatternLayout">
