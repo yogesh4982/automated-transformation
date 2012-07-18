@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+
+	
+	<import resource="../common/baseConfiguration.xml" />
+
+	<job id="DYNAMIC_READER_TEST" xmlns="http://www.springframework.org/schema/batch">
+		 
+		<step id="populateIntConf" next="readWrite">
+			<tasklet ref="interfaceMasterReaderTasklet" />
+		</step>
+		 
+		<step id="readWrite" >
+			<tasklet>
+				<chunk reader="itemReader" processor="formattingProcessor"
+					writer="dummyitemWritter" commit-interval="250">
+				
+				</chunk>
+			</tasklet>
+			
+			
+		</step>
+		
+		
+	</job>
+	
+	<bean id="itemReader"
+		class="org.abc.framework.reader.DynamicQueryJdbcCursorItemReader"
+		scope="step">
+		<property name="dataSource" ref="dataSource" />
+		<property name="interfaceConfigurationBeanList"
+			value="#{jobExecutionContext['interfaceConfigurationBeanList']}"></property>
+		<property name="rowMapper" ref="hashMapRowMapper" />
+	</bean>
+
+	<bean id="hashMapRowMapper" class="org.abc.framework.mapper.HashMapRowMapper" />
+
+	<bean id="formattingProcessor"
+		class="org.abc.framework.processor.DynamicFormattingProcessor"
+		scope="step">
+		<property name="interfaceConfigurationBeanList"
+			value="#{jobExecutionContext['interfaceConfigurationBeanList']}"></property>
+	</bean> 
+	
+	<bean id="dummyitemWritter"
+		class="org.abc.framework.writter.DummyWritter"
+		scope="step">
+		
+	</bean> 
+	
+	
+	<jdbc:initialize-database data-source="dataSource">
+		<jdbc:script location="classpath:/org/abc/framework/reader/create_staging_data.sql" />
+	</jdbc:initialize-database>
+
+</beans>

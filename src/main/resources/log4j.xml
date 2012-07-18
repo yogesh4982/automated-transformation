@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<appender name="DEBUG_LOG" class="org.apache.log4j.RollingFileAppender">
+		<param name="File"
+			value="D:/Apparel/${logFileLocation}/${logFileLocation}_trace.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="20" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%t] %d{HH\:mm\:ss.SSS MM/dd/yy}: %-32c{1} [%p] %m %n" />
+		</layout>
+	</appender>
+	<appender name="ERROR_LOG" class="org.apache.log4j.RollingFileAppender">
+		<param name="File"
+			value="D:/Apparel/${logFileLocation}/${logFileLocation}_error.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="20" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%t] %d{HH\:mm\:ss.SSS MM/dd/yy}: %-32c{1} [%p] %m %n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="ERROR" />
+			<param name="LevelMin" value="ERROR" />
+		</filter>
+	</appender>
+
+	<appender name="ERROR_DATA" class="org.apache.log4j.RollingFileAppender">
+		<param name="File"
+			value="D:/Apparel/${logFileLocation}/${logFileLocation}_error_data.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="20" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%t] %d{HH\:mm\:ss.SSS MM/dd/yy}: %-32c{1} [%p] %m %n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="ERROR" />
+			<param name="LevelMin" value="ERROR" />
+		</filter>
+	</appender>
+	
+	<appender name="P1_TICKET" class="org.apache.log4j.RollingFileAppender">
+		<param name="File"
+			value="D:/Apparel/${interfaceCode}_${logFileLocation}_error_p1ticket.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="20" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%t] %d{HH\:mm\:ss.SSS MM/dd/yy}: %-32c{1} [%p] %m %n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMax" value="INFO" />
+			<param name="LevelMin" value="INFO" />
+		</filter>
+	</appender>
+	
+
+	<appender name="CA" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="[%t] %d{HH\:mm\:ss.SSS MM/dd/yy}: %-32c{1} [%p] %m %n" />
+		</layout>
+	</appender>
+
+	<logger name="com.tru.integration.common.listener.SkipListener"
+		additivity="false">
+		<level value="ERROR" />
+		<appender-ref ref="ERROR_DATA" />
+	</logger>
+	
+	<logger name="com.tru.integration.common.utils.BatchMonitoringNotifierImpl"
+		additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="P1_TICKET" />
+	</logger>
+
+
+
+
+	<root>
+		<appender-ref ref="DEBUG_LOG" />
+		<appender-ref ref="ERROR_LOG" />
+		<appender-ref ref="CA" />
+	</root>
+
+</log4j:configuration> 
