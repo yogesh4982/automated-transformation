@@ -10,5 +10,6 @@ public interface Constants
 	String HEADER_FOOTER_TOTAL_COUNT="TOTAL_COUNT";
 	String HEADER_FOOTER_TOTAL_COUNT_WITH_HEADER="TOTAL_COUNT_WITH_HEADER";
 	String LINE_TAB_BREAK = "\n\t";
+	String LEVEL = "LEVEL";
 	
 }

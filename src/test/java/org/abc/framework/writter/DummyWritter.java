@@ -12,7 +12,7 @@ public class DummyWritter implements ItemWriter<Object> {
 
 	public void write(List<? extends Object> items) throws Exception
 	{
-		System.out.println("items = "+items.size());
+		System.out.println("items = "+items);
 		
 	}
 

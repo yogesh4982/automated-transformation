@@ -36,7 +36,7 @@ public class InterfaceMasterBLOTest extends TestCase
 	@Test
 	public void testGetInterfaceConfigurationBeanList()
 	{
-		List<InterfaceConfigurationBean> list = interfaceMasterBLO.getInterfaceConfigurationBeanList(1);
+		List<InterfaceConfigurationBean> list = interfaceMasterBLO.getInterfaceConfigurationBeanList(2);
 		assertNotNull(list);
 		
 	}
