@@ -1,6 +1,7 @@
 package org.abc.framework.bean.common;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,6 +147,35 @@ public class AttributesBean
 	public void setVarryingFields(final List<AttributesBean> varryingFields_)
 	{
 		this.varryingFields = varryingFields_;
+	}
+	
+	public List<Map<String,String>> getListHashMap()
+	{
+		List<Map<String,String>> result = new ArrayList<Map<String,String>>();
+
+		if (varryingFields != null && varryingFields.size() != 0)
+		{
+			Map<String, String> currentLevelMap = null;
+			for (AttributesBean nextLevelAttributesBean : varryingFields)
+			{
+				List<Map<String,String>> nextLevelListHashMap = nextLevelAttributesBean.getListHashMap();
+				for (Map<String, String> nextLevelHashMap : nextLevelListHashMap)
+				{
+					currentLevelMap = new HashMap<String, String>();
+					currentLevelMap.putAll(attributes);
+					currentLevelMap.putAll(nextLevelHashMap);
+					result.add(currentLevelMap);
+				}
+				
+			}
+		} 
+		else
+		{
+			Map<String, String> currentLevelMap = new HashMap<String, String>();
+			currentLevelMap.putAll(attributes);
+			result.add(currentLevelMap);
+		}
+		return result;
 	}
 
 }

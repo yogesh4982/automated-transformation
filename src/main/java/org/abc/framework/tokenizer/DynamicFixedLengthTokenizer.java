@@ -96,8 +96,9 @@ public class DynamicFixedLengthTokenizer extends FixedLengthTokenizer implements
 		for (InterfaceConfigurationBean interfaceConfigurationBean : sortedBySourcePositionInterfaceConfigurationBeanList)
 		{
 			if (key.equals(interfaceConfigurationBean.getSource()))
-			{
-				result.add(interfaceConfigurationBean.getSourceColumn());
+			{	// set key as field id instead of Source column
+				//result.add(interfaceConfigurationBean.getSourceColumn());
+				result.add(interfaceConfigurationBean.getFieldId());
 			}
 		}
 		String[] nameResult = new String[result.size()-1];
