@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import org.abc.framework.bean.common.AttributesBean;
+import org.abc.framework.bean.AttributesBean;
 import org.abc.framework.bean.common.Constants;
 import org.apache.log4j.Logger;
 import org.springframework.batch.item.ParseException;

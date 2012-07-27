@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.abc.framework.bean.AttributesBean;
 import org.abc.framework.bean.InterfaceConfigurationBean;
-import org.abc.framework.bean.common.AttributesBean;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ExecutionContext;
