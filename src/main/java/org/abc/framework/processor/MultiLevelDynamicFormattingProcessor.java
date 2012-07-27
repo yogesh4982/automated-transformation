@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.abc.framework.bean.common.AttributesBean;
+import org.abc.framework.bean.AttributesBean;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 
