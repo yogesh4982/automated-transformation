@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd">
+	<import resource="../common/baseConfiguration.xml" />
+
+
+
+	<job id="MERCH_FILE" xmlns="http://www.springframework.org/schema/batch">
+
+		<step id="populateIntConf" next="readWrite">
+			<tasklet ref="interfaceMasterReaderTasklet" />
+		</step>
+
+
+		<step id="readWrite">
+			<tasklet>
+				<chunk reader="itemReader" writer="writer" commit-interval="1">
+
+				</chunk>
+
+			</tasklet>
+
+		</step>
+
+
+
+	</job>
+	<bean id="itemReader"
+		class="org.abc.framework.reader.AttributesBeanFlatFilePeekableItemReader"
+		scope="step">
+		<property name="reader">
+			<bean
+				class="org.springframework.batch.item.support.SingleItemPeekableItemReader">
+				<property name="delegate" ref="reader1" />
+			</bean>
+
+
+		</property>
+		<property name="interfaceConfigurationBeanList"
+			value="#{jobExecutionContext['interfaceConfigurationBeanList']}"></property>
+		<property name="maxRecordLevel" value="#{jobExecutionContext['MAX_RECORD_LEVEL']}"></property>
+	</bean>
+
+	<bean id="reader1" class="org.springframework.batch.item.file.FlatFileItemReader"
+		scope="step">
+		<property name="resource"
+			value="classpath:/org/abc/framework/mapper/Input_Delimited.txt" />
+		<property name="lineMapper" ref="lineMapper" />
+	</bean>
+
+	<bean id="lineMapper"
+		class="org.abc.framework.mapper.DynamicPatternMatchingCompositeLineMapper"
+		scope="step">
+		<property name="delimiter" value =","/>
+		<property name="interfaceConfigurationBeanList"
+			value="#{jobExecutionContext['interfaceConfigurationBeanList']}"></property>
+	</bean>
+
+
+	<bean id="writer1" class="org.abc.framework.writter.DummyWritter"
+		scope="step">
+
+	</bean>
+
+	<bean id="writer" class="org.abc.framework.writer.MapJdbcItemWriter" scope="step">
+		<property name="assertUpdates" value="true" />
+		<property name="interfaceConfigurationBeanList"
+			value="#{jobExecutionContext['interfaceConfigurationBeanList']}"></property>
+		<property name="itemPreparedStatementSetter">
+			<bean
+				class="org.abc.framework.common.MapPreparedStatementSetter" >
+				<property name="fieldIdToConfigBean" value="#{jobExecutionContext['fieldIdToConfigBean']}" />
+				</bean>
+		</property>
+		<property name="sql" value="" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- <jdbc:initialize-database data-source="dataSource">
+		<jdbc:script location="classpath:/org/abc/framework/writer/create_target_table.sql" />
+	</jdbc:initialize-database> -->
+</beans>
