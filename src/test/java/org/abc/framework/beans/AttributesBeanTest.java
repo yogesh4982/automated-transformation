@@ -7,7 +7,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.abc.framework.bean.common.AttributesBean;
+import org.abc.framework.bean.AttributesBean;
 import org.junit.Test;
 
 public class AttributesBeanTest extends TestCase

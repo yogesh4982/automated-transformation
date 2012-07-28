@@ -7,7 +7,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.abc.framework.bean.InterfaceConfigurationBean;
-import org.abc.framework.bean.common.SourcePositionComaparator;
+import org.abc.framework.bean.SourcePositionComaparator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
