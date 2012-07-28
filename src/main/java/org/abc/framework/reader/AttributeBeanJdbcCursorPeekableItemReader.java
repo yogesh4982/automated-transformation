@@ -1,6 +1,5 @@
 package org.abc.framework.reader;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,12 +7,8 @@ import org.abc.framework.bean.AttributesBean;
 import org.abc.framework.bean.InterfaceConfigurationBean;
 import org.abc.framework.bean.common.Constants;
 import org.abc.framework.bean.common.TransformationSystemException;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemStream;
-import org.springframework.batch.item.ItemStreamException;
-import org.springframework.batch.item.support.SingleItemPeekableItemReader;
-import org.springframework.beans.factory.annotation.Required;
 /******************************************************************************
 *
 * File Name        : AggregateJdbcCursorPeekableAttributesBeanItemReader.java
@@ -23,73 +18,11 @@ import org.springframework.beans.factory.annotation.Required;
 * @version         : 1.0
 * 
 *****************************************************************************/
-public class AggregateJdbcCursorPeekableAttributesBeanItemReader implements
-		ItemReader<AttributesBean>, ItemStream {
+public class AttributeBeanJdbcCursorPeekableItemReader extends AbstractPeekableItemReader {
 
-	private SingleItemPeekableItemReader<HashMap<String, String>> reader;
+	
+	
 
-	private List<InterfaceConfigurationBean> interfaceConfigurationBeanList;
-
-	private AttributesBean currentRecordAttributesBean;
-
-	private String maxRecordLevel;
-	/**
-	 * This is the getter method for List of InterfaceConfigurationBean.
-	 * @return List
-	 */
-	public List<InterfaceConfigurationBean> getInterfaceConfigurationBeanList() {
-		return interfaceConfigurationBeanList;
-	}
-	/**
-	 * This is the setter method for List of InterfaceConfigurationBean.
-	 * @param interfaceConfigurationBeanList__
-	 * 			  List
-	 */
-	public void setInterfaceConfigurationBeanList(
-			final List<InterfaceConfigurationBean> interfaceConfigurationBeanList__) {
-		this.interfaceConfigurationBeanList = interfaceConfigurationBeanList__;
-	}
-	/**
-	 * This is the getter method for MaxRecordLevel.
-	 * 
-	 * @return String
-	 */
-	public String getMaxRecordLevel() {
-		return maxRecordLevel;
-	}
-
-	/**
-	 * This is the setter method for MaxRecordLevel.
-	 * 
-	 * @param maxRecordLevel_
-	 *            String
-	 */
-	@Required
-	public void setMaxRecordLevel(final String maxRecordLevel_) {
-		this.maxRecordLevel = maxRecordLevel_;
-	}
-
-	/**
-	 * This method will read the result set with group by KEY fields.
-	 * @return AttributesBean
-	 */
-	public AttributesBean read() 
-	{
-		try
-		{
-			final Map<String, String> rowData = reader.read();
-			currentRecordAttributesBean = new AttributesBean();
-			if (rowData != null) {
-				getAttributeBean(rowData);
-			} else {
-				return null;
-			}
-		}
-		catch (Exception exception) {
-			throw new TransformationSystemException(exception.getMessage());
-		}
-		return currentRecordAttributesBean;
-	}
 
 	/**
 	 * Method keep on peeking next records until it hits next group.
@@ -97,7 +30,7 @@ public class AggregateJdbcCursorPeekableAttributesBeanItemReader implements
 	 * @param rowDataNew_
 	 *            -Current record
 	 */
-	private void getAttributeBean(final Map<String, String> rowDataNew_)
+	protected void getAttributeBean(final Map<String, String> rowDataNew_)
 	{
 		try
 		{
@@ -107,6 +40,12 @@ public class AggregateJdbcCursorPeekableAttributesBeanItemReader implements
 			boolean isLevel1Changed = true;
 	
 			do {
+				if (!(Constants.HEADER_RECORD_LEVEL.equals(rowDataNew_
+						.get(Constants.LEVEL)) || Constants.TRAILER_RECORD_LEVEL
+						.equals(rowDataNew_.get(Constants.LEVEL)))) {
+					super.getAttributeBean(rowDataNew_);
+				}
+				
 				// Map level 1 bean to currentRecordAttributesBean
 				mapLevelRecordsToAttributesBean(rowData, currentRecordAttributesBean, 1);
 				// map all levels below level 2 to currentRecordAttributesBean
@@ -199,63 +138,8 @@ public class AggregateJdbcCursorPeekableAttributesBeanItemReader implements
 		return false;
 	}
 
-	/**
-	 * This method is used to open Execution Context.
-	 * 
-	 * @param executionContext_
-	 *            ExecutionContext
-	 * @throws ItemStreamException
-	 *             Exception
-	 */
-	public void open(final ExecutionContext executionContext_)
-			throws ItemStreamException {
-		reader.open(executionContext_);
-
-	}
-
-	/**
-	 * This method is used to update Execution Context.
-	 * 
-	 * @param executionContext_
-	 *            ExecutionContext
-	 * @throws ItemStreamException
-	 *             Exception
-	 */
-	public void update(final ExecutionContext executionContext_)
-			throws ItemStreamException {
-		reader.update(executionContext_);
-
-	}
-
-	/**
-	 * This method is used to close Execution Context.
-	 * 
-	 * @throws ItemStreamException
-	 *             Exception
-	 */
-	public void close() throws ItemStreamException {
-		reader.close();
-
-	}
-	/**
-	 * This method is getter method for Reader.
-	 * 
-	 * @return SingleItemPeekableItemReader
-	 */
-	public SingleItemPeekableItemReader<HashMap<String, String>> getReader() {
-		return reader;
-	}
-	/**
-	 * This is the setter method for Reader.
-	 * 
-	 * @param reader_
-	 *            SingleItemPeekableItemReader
-	 */
-	@Required
-	public void setReader(
-			final SingleItemPeekableItemReader<HashMap<String, String>> reader_) {
-		this.reader = reader_;
-	}
+	
+	
 
 	/**
 	 * This method maps the current level and 
@@ -302,5 +186,7 @@ public class AggregateJdbcCursorPeekableAttributesBeanItemReader implements
 		}
 
 	}
+
+	
 
 }

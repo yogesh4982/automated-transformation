@@ -61,7 +61,7 @@
 	</bean>
 
 
-	<bean id="writer1" class="org.abc.framework.writter.DummyWritter"
+	<bean id="writer1" class="org.abc.framework.writer.DummyWritter"
 		scope="step">
 
 	</bean>

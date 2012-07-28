@@ -71,7 +71,7 @@ public class InterfaceMasterDAO
 		stringBuilder.append("TARGET_COLUMN,TARGET,");
 		stringBuilder.append("DATA_FORMATTING_STRING,JAVA_FORMATTING_STRING,TRUNCATE_FLAG,");
 		stringBuilder.append("INPUT_FIELD_LENGTH,OUTPUT_FIELD_LENGTH, INPUT_POSITION, OUTPUT_POSITION,");
-		stringBuilder.append("ALIGNMENT_IND, RECORD_LEVEL ");
+		stringBuilder.append("ALIGNMENT_IND, RECORD_LEVEL, INCLUDE_IN_HASH_TOTAL ");
 		stringBuilder.append("FROM INTERFACE_CONFIGURATION ");
 		stringBuilder.append("WHERE INTERFACE_ID = ? ");
 		stringBuilder.append("ORDER BY RECORD_LEVEL,OUTPUT_POSITION ");

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+
+	
+	<import resource="../common/baseConfiguration.xml" />
+
+	<job id="ATTRIBUTEBEAN_JDBC_CURSOR_PEEKABLE_ITEM_READER" xmlns="http://www.springframework.org/schema/batch">
+		 
+		<step id="populateIntConf" next="readWrite">
+			<tasklet ref="interfaceMasterReaderTasklet" />
+		</step>
+		 
+		<step id="readWrite" >
+			<tasklet>
+				<chunk reader="itemReader" processor="multiLevelFormattingProcessor"
+					writer="itemWriter" commit-interval="250">
+				
+				</chunk>
+			</tasklet>
+			
+			
+		</step>
+		
+		
+	</job>
+	
+	<bean id="itemReader"
+		class="org.abc.framework.reader.AttributeBeanJdbcCursorPeekableItemReader"
+		scope="step">
+		<property name="reader">
+			<bean
+				class="org.springframework.batch.item.support.SingleItemPeekableItemReader">
+				<property name="delegate" ref="dynamicQueryItemReader" />
+			</bean>
+		</property>
+		<property name="interfaceConfigurationBeanList"
+			value="#{jobExecutionContext['interfaceConfigurationBeanList']}"></property>
+		<property name="maxRecordLevel" value="#{jobExecutionContext['MAX_RECORD_LEVEL']}"></property>
+	</bean>
+
+	<bean id="dynamicQueryItemReader"
+		class="org.abc.framework.reader.DynamicQueryJdbcCursorItemReader"
+		scope="step">
+		<property name="dataSource" ref="dataSource" />
+		<property name="whereClause"
+			value="where ordhead.order_id = orddtl.order_id" />
+		<property name="interfaceConfigurationBeanList"
+			value="#{jobExecutionContext['interfaceConfigurationBeanList']}"></property>
+		<property name="rowMapper" ref="hashMapRowMapper" />
+	</bean>
+
+	<bean id="hashMapRowMapper" class="org.abc.framework.mapper.HashMapRowMapper" />
+	
+	
+	<bean id="itemWriter" class="org.abc.framework.writer.CommonHeaderFooterFlileWriter"
+		scope="step">
+		<property name="resource"
+			value="file:/org/abc/framework/writer/common_header_footer.txt" />
+		<property name="lineAggregator">
+			<bean
+				class="org.springframework.batch.item.file.transform.DelimitedLineAggregator"
+				scope="step">
+				<property name="fieldExtractor">
+					<bean
+						class="org.springframework.batch.item.file.transform.PassThroughFieldExtractor" />
+				</property>
+				<property name="delimiter" value="" />
+
+			</bean>
+		</property>
+		<property name="headerCallback" ref="itemWriter" />
+		<property name="footerCallback" ref="itemWriter" />
+			<property name="interfaceConfigurationBeanList"
+			value="#{jobExecutionContext['interfaceConfigurationBeanList']}"></property>
+		
+	</bean> 
+	
+	<bean id="multiLevelFormattingProcessor"
+		class="org.abc.framework.processor.MultiLevelDynamicFormattingProcessor"
+		scope="step">
+		<property name="interfaceConfigurationBeanList"
+			value="#{jobExecutionContext['interfaceConfigurationBeanList']}"></property>
+		<property name="maxRecordLevel" value="#{jobExecutionContext['MAX_RECORD_LEVEL']}"></property>
+
+
+	</bean>
+	
+
+</beans>

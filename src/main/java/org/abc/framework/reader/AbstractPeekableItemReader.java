@@ -9,12 +9,15 @@
 package org.abc.framework.reader;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.abc.framework.bean.AttributesBean;
 import org.abc.framework.bean.InterfaceConfigurationBean;
+import org.abc.framework.bean.common.Constants;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ExecutionContext;
@@ -25,6 +28,7 @@ import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.batch.item.support.SingleItemPeekableItemReader;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 
 
@@ -32,28 +36,30 @@ import org.springframework.beans.factory.annotation.Required;
  * @author : TCS Date : 04/3/2012 07:00:00 PM
  * @version : 1.0
  * */
-public abstract class AbstractFlatFilePeekableItemReader implements ItemReader<AttributesBean>, ItemStream
+public abstract class AbstractPeekableItemReader implements ItemReader<AttributesBean>, ItemStream ,InitializingBean
 {
 
-	private SingleItemPeekableItemReader<HashMap<String, String>> reader;
+	protected SingleItemPeekableItemReader<HashMap<String, String>> reader;
 
-	private List<InterfaceConfigurationBean> interfaceConfigurationBeanList;
-
-	private AttributesBean attributesBean;
+	protected List<InterfaceConfigurationBean> interfaceConfigurationBeanList;
+	
+	protected AttributesBean currentRecordAttributesBean;
+	
+	protected String maxRecordLevel;
 
 	private StepExecution stepExecution;
 	
-	protected BigDecimal recordCount = new BigDecimal(0);;
+	private BigDecimal recordCount= new BigDecimal(0);;
 	
-	protected BigDecimal hashCount = new BigDecimal(0);;
+	private BigDecimal hashCount = new BigDecimal(0);;
 	
-	
+	private List<String> hashCountFieldIds;
 	/**
 	 * @return the currentAttributesBean
 	 */
 	public AttributesBean getCurrentAttributesBean()
 	{
-		return attributesBean;
+		return currentRecordAttributesBean;
 	}
 
 
@@ -62,7 +68,7 @@ public abstract class AbstractFlatFilePeekableItemReader implements ItemReader<A
 	 */
 	public void setCurrentAttributesBean(final AttributesBean currentAttributesBean_)
 	{
-		this.attributesBean = currentAttributesBean_;
+		this.currentRecordAttributesBean = currentAttributesBean_;
 	}
 
 
@@ -198,26 +204,18 @@ public abstract class AbstractFlatFilePeekableItemReader implements ItemReader<A
 	{
 
 		final Map<String,String> rowData = reader.read();
-
-		attributesBean = new AttributesBean();
+		currentRecordAttributesBean = new AttributesBean();
 		if (rowData != null)
 		{
-			getAttributesBean(rowData);
+			
+			getAttributeBean(rowData);
 		}
 		else
 		{
 			return null;
 		}
-		// check if last record is Footer
-		/*if (currentAttributesBean.getRecordBean() instanceof Footer){
-			// store hashcount and record count in stepexecution context
-			stepExecution.getJobExecution().getExecutionContext()
-				.put(Constants.MULTILEVEL_RECORD_COUNT, recordCount);
-			stepExecution.getJobExecution().getExecutionContext()
-				.put(Constants.MULTILEVEL_HASH_COUNT, hashCount);
-		}*/
-		
-		return attributesBean;
+				
+		return currentRecordAttributesBean;
 
 	}
 
@@ -228,8 +226,79 @@ public abstract class AbstractFlatFilePeekableItemReader implements ItemReader<A
 	 * @throws ParseException ParseException
 	 * @throws Exception Exception
 	 */
-	public abstract void getAttributesBean(Map<String, String> rowData_) 
-			throws UnexpectedInputException, ParseException, Exception;
+	protected  void getAttributeBean(Map<String, String> rowData_) 
+			throws UnexpectedInputException, ParseException, Exception
+			{
+					updateRecordCount();
+					updateHashCount(rowData_);
+			}
 
+	/**
+	 * This method updates the record count in execution context.
+	 * 
+	 * @param stepExecution_
+	 *            StepExecution
+	 * @return ExitStatus ExitStatus
+	 */
+	protected void updateRecordCount()
+	{
+		recordCount = recordCount.add(new BigDecimal(1));
+		stepExecution.getExecutionContext().put(Constants.RECORD_COUNT, recordCount);
+	}
+	
+	/**
+	 * This method calculates and updates the hash count in execution context.
+	 * 
+	 * @param stepExecution_
+	 *            StepExecution
+	 * @return ExitStatus ExitStatus
+	 */
+	
+	protected void updateHashCount(Map<String,String> rowData) {
+	//	InterfaceConfigurationBean = getFieldIdToConfigBean();
+		Set<String> fieldIds = rowData.keySet();
+		for(String fieldId:fieldIds)
+		{
+			if (hashCountFieldIds.contains(fieldId)){
+				String valueForHashtCount = rowData.get(fieldId);
+				hashCount = hashCount.add(new BigDecimal(valueForHashtCount));
+			}
+		}
+		stepExecution.getExecutionContext().put(Constants.HASH_COUNT, hashCount);
+	}
+	
+	public void populateHashCountFieldIds()
+	{
+		hashCountFieldIds = new ArrayList<String>();
+		for(InterfaceConfigurationBean interfaceConfigurationBean: getInterfaceConfigurationBeanList()){
+			if ("Y".equals(interfaceConfigurationBean.getIncludeInHashtotal())){
+				hashCountFieldIds.add(interfaceConfigurationBean.getFieldId());
+			}
+		}
+		
+			
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		populateHashCountFieldIds();
+		
+	}
+
+
+	/**
+	 * @return the maxRecordLevel
+	 */
+	public String getMaxRecordLevel() {
+		return maxRecordLevel;
+	}
+
+
+	/**
+	 * @param maxRecordLevel the maxRecordLevel to set
+	 */
+	public void setMaxRecordLevel(String maxRecordLevel) {
+		this.maxRecordLevel = maxRecordLevel;
+	}
+	
 	
 }

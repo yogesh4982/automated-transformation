@@ -31,7 +31,8 @@ public class MapJdbcItemWriter extends JdbcBatchItemWriter<Map<String, String>>
 				parameters.append(" values (");
 
 			}
-			if (!Constants.FILLER.equals(interfaceConfigurationBean.getTargetColumn()))
+			if (!Constants.FILLER.equals(interfaceConfigurationBean.getTargetColumn()) 
+					&& Constants.FIELD_TYPE_DETAIL_RECORD.equals(interfaceConfigurationBean.getFieldType()))
 			{
 				String targetColumn = interfaceConfigurationBean.getTargetColumn();
 				if (targetColumn != null && !"".equals(targetColumn.trim()))

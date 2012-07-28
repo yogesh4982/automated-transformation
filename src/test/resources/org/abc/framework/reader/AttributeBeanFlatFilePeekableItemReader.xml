@@ -9,7 +9,7 @@
 	
 	<import resource="../common/baseConfiguration.xml" />
 
-	<job id="DYNAMIC_READER_TEST" xmlns="http://www.springframework.org/schema/batch">
+	<job id="ATTRIBUTES_BEAN_PEEKABLE_ITEMREADER" xmlns="http://www.springframework.org/schema/batch">
 		 
 		<step id="populateIntConf" next="readWrite">
 			<tasklet ref="interfaceMasterReaderTasklet" />
@@ -17,7 +17,7 @@
 		 
 		<step id="readWrite" >
 			<tasklet>
-				<chunk reader="itemReader" processor="formattingProcessor"
+				<chunk reader="itemReader" 
 					writer="dummyitemWritter" commit-interval="250">
 				
 				</chunk>
@@ -30,22 +30,38 @@
 	</job>
 	
 	<bean id="itemReader"
-		class="org.abc.framework.reader.DynamicQueryJdbcCursorItemReader"
+		class="org.abc.framework.reader.AttributesBeanFlatFilePeekableItemReader"
 		scope="step">
-		<property name="dataSource" ref="dataSource" />
+		<property name="reader">
+			<bean
+				class="org.springframework.batch.item.support.SingleItemPeekableItemReader">
+				<property name="delegate" ref="reader1" />
+			</bean>
+
+
+		</property>
 		<property name="interfaceConfigurationBeanList"
 			value="#{jobExecutionContext['interfaceConfigurationBeanList']}"></property>
-		<property name="rowMapper" ref="hashMapRowMapper" />
+		<property name="maxRecordLevel" value="#{jobExecutionContext['MAX_RECORD_LEVEL']}"></property>
+	</bean>
+
+	<bean id="reader1" class="org.springframework.batch.item.file.FlatFileItemReader"
+		scope="step">
+		<property name="resource"
+			value="classpath:/org/abc/framework/reader/Input_Fixed_Length_Header_Trailer.txt" />
+		<property name="lineMapper" ref="lineMapper" />
+	</bean>
+
+	<bean id="lineMapper"
+		class="org.abc.framework.mapper.DynamicPatternMatchingCompositeLineMapper"
+		scope="step">
+		<property name="interfaceConfigurationBeanList"
+			value="#{jobExecutionContext['interfaceConfigurationBeanList']}"></property>
 	</bean>
 
 	<bean id="hashMapRowMapper" class="org.abc.framework.mapper.HashMapRowMapper" />
 
-	<bean id="formattingProcessor"
-		class="org.abc.framework.processor.DynamicFormattingProcessor"
-		scope="step">
-		<property name="interfaceConfigurationBeanList"
-			value="#{jobExecutionContext['interfaceConfigurationBeanList']}"></property>
-	</bean> 
+	
 	
 	<bean id="dummyitemWritter"
 		class="org.abc.framework.writer.DummyWritter"
@@ -54,8 +70,6 @@
 	</bean> 
 	
 	
-	<jdbc:initialize-database data-source="dataSource">
-		<jdbc:script location="classpath:/org/abc/framework/reader/create_staging_data.sql" />
-	</jdbc:initialize-database>
+	
 
 </beans>

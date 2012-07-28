@@ -56,6 +56,8 @@ public class InterfaceConfigurationBean implements Serializable
 	
 	private String outputPosition;
 	
+	private String includeInHashtotal;
+	
 	
 	/**
 	 * @return the fieldId
@@ -353,6 +355,14 @@ public class InterfaceConfigurationBean implements Serializable
 	public void setOutputFieldLength(String outputFieldLength)
 	{
 		this.outputFieldLength = outputFieldLength;
+	}
+
+	public String getIncludeInHashtotal() {
+		return includeInHashtotal;
+	}
+
+	public void setIncludeInHashtotal(String includeInHashtotal) {
+		this.includeInHashtotal = includeInHashtotal;
 	}
 
 	

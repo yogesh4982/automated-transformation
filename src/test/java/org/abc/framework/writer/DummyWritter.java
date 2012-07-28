@@ -1,4 +1,4 @@
-package org.abc.framework.writter;
+package org.abc.framework.writer;
 
 import java.util.List;
 

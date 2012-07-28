@@ -53,7 +53,7 @@ public class InterfaceConfigurationRowMapper implements RowMapper<InterfaceConfi
 		attributeConfigBean.setInputPosition(resultSet_.getString("INPUT_POSITION"));
 		attributeConfigBean.setOutputPosition(resultSet_.getString("OUTPUT_POSITION"));
 		attributeConfigBean.setAlignmentIndicator(resultSet_.getString("ALIGNMENT_IND"));
-
+		attributeConfigBean.setIncludeInHashtotal(resultSet_.getString("INCLUDE_IN_HASH_TOTAL"));
 		return attributeConfigBean;
 	}
 

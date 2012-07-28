@@ -44,7 +44,8 @@ public class InterfaceConfigurationQueryProvider
 
 		for (int index = 0; index < orderedAttributeList_.size(); index++)
 		{
-			if (!orderedAttributeList_.get(index).getFieldName().equalsIgnoreCase(Constants.FILLER))
+			if (!orderedAttributeList_.get(index).getFieldName().equalsIgnoreCase(Constants.FILLER)
+					&& Constants.FIELD_TYPE_DETAIL_RECORD.equals(orderedAttributeList_.get(index).getFieldType()))
 			{
 				
 				if(!tableNameList.contains(orderedAttributeList_.get(index).getSource()))

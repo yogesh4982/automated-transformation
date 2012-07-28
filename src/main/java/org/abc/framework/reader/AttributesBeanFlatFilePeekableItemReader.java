@@ -9,30 +9,24 @@
  *****************************************************************************/
 package org.abc.framework.reader;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
 import org.abc.framework.bean.AttributesBean;
 import org.abc.framework.bean.common.Constants;
-import org.apache.log4j.Logger;
 import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
 
 /**
- * @author : TCS Date : 04/19/2012 07:00:00 PM
+ * @author : 
+ * Date : 04/19/2012 07:00:00 PM
  * @version : 1.0
  */
 
-public class AttributesBeanFlatFilePeekableItemReader extends AbstractFlatFilePeekableItemReader
+public class AttributesBeanFlatFilePeekableItemReader extends AbstractPeekableItemReader 
 {
 
-	private Logger logger = Logger.getLogger(AttributesBeanFlatFilePeekableItemReader.class);
-
-	private BigDecimal recordCount = new BigDecimal(0);
-
-	private int maxRecordLevel;
-
+	
 	/**
 	 * This method is use to get AttributeBean.
 	 * 
@@ -50,22 +44,30 @@ public class AttributesBeanFlatFilePeekableItemReader extends AbstractFlatFilePe
 	 */
 
 	@Override
-	public void getAttributesBean(Map<String, String> currentrowData_) throws UnexpectedInputException, ParseException,
+	protected void getAttributeBean(Map<String, String> currentrowData_) throws UnexpectedInputException, ParseException,
 			Exception
 	{
 		Map<String, String> nextRowData = null;
 
 		do
 		{
-			if ("1".equals(currentrowData_.get(Constants.LEVEL)))
+			super.getAttributeBean(currentrowData_);
+			// for header level = 0
+			// for trailer level = -1
+			if (Constants.HEADER_RECORD_LEVEL.equals(currentrowData_.get(Constants.LEVEL)) ||
+					Constants.TRAILER_RECORD_LEVEL.equals(currentrowData_.get(Constants.LEVEL)))
+			{
+				getCurrentAttributesBean().setAttributes(currentrowData_);
+				break;
+			} else if ("1".equals(currentrowData_.get(Constants.LEVEL)))
 			{
 				getCurrentAttributesBean().setAttributes(currentrowData_);
 			}
 			setVarryingFields(currentrowData_, getCurrentAttributesBean(), 1);
 
-			recordCount = recordCount.add(new BigDecimal(1));
 			nextRowData = getReader().peek();
-			if (nextRowData != null && "1".equals(nextRowData.get(Constants.LEVEL)))
+			if (nextRowData != null && ("1".equals(nextRowData.get(Constants.LEVEL)) ||
+					Constants.TRAILER_RECORD_LEVEL.equals(nextRowData.get(Constants.LEVEL))))
 			{
 				break;
 			}
@@ -78,22 +80,14 @@ public class AttributesBeanFlatFilePeekableItemReader extends AbstractFlatFilePe
 
 	}
 
-	public int getMaxRecordLevel()
-	{
-		return maxRecordLevel;
-	}
-
-	public void setMaxRecordLevel(int maxRecordLevel)
-	{
-		this.maxRecordLevel = maxRecordLevel;
-	}
+	
 
 	private void setVarryingFields(Map<String, String> currentrowData_, AttributesBean currentLevelAttributesBean,
 			int currentLevel)
 	{
 		List<AttributesBean> nextLevelAttributesBeanList = currentLevelAttributesBean.getVarryingFields();
 		int nextLevel = currentLevel + 1;
-		if (nextLevel > maxRecordLevel)
+		if (nextLevel > Integer.parseInt(maxRecordLevel))
 		{
 			return;
 		}
@@ -111,4 +105,8 @@ public class AttributesBeanFlatFilePeekableItemReader extends AbstractFlatFilePe
 		}
 
 	}
+	
+	
+	
+	
 }
