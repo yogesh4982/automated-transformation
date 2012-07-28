@@ -79,6 +79,7 @@ public class InterfaceMasterReaderTasklet implements Tasklet
 		
 		final Map<String, String> sourceColumnToFieldIdMap = new HashMap<String, String>();
 		final Map<String, String> fieldIdToFieldNameMap = new HashMap<String, String>();
+		final Map<String, InterfaceConfigurationBean> fieldIdToConfigBean = new HashMap<String, InterfaceConfigurationBean>();
 		for(InterfaceConfigurationBean configBean: interfaceConfigurationBeanList)
 		{
 			if (!configBean.getFieldName().equalsIgnoreCase(Constants.FILLER))
@@ -88,9 +89,11 @@ public class InterfaceMasterReaderTasklet implements Tasklet
 						configBean.getFieldId());
 				fieldIdToFieldNameMap.put(configBean.getFieldId(), configBean.getFieldName());
 			}
+			fieldIdToConfigBean.put(configBean.getFieldId(), configBean);
 		}
 		jobExecutionContext.put("sourceColumnToFieldIdMap", sourceColumnToFieldIdMap);
 		jobExecutionContext.put("fieldIdToFieldNameMap", fieldIdToFieldNameMap);
+		jobExecutionContext.put("fieldIdToConfigBean", fieldIdToConfigBean);
 		
 		return RepeatStatus.FINISHED;
 	}
