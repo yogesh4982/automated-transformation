@@ -21,13 +21,20 @@
 		<property name="jobRepository" ref="jobRepository" />
 	</bean>
 
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
+	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
 		<property name="driverClassName" value="org.h2.Driver" />
 		<property name="url" value="jdbc:h2:." />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
 		<property name="suppressClose" value="true" />
-	</bean>
+	</bean> -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.ReplicationDriver" />
+		<property name="url" value="jdbc:mysql://10.8.7.212:3306/automatedtransformation" />
+		<property name="username" value="test1" />
+		<property name="password" value="test1" />
+		<property name="suppressClose" value="true" />
+	</bean> 
 	
 	<bean id="interfaceMasterBLO" class="org.abc.framework.blo.InterfaceMasterBLO">
 		<property name="interfaceMasterDAO" ref="interfaceMasterDAO" />
@@ -55,10 +62,10 @@
 		</property>
 	</bean> -->
 
-	<jdbc:initialize-database data-source="dataSource">
+	<!-- <jdbc:initialize-database data-source="dataSource">
 		<jdbc:script location="classpath:/org/abc/framework/common/create_base_tables.sql" />
 		<jdbc:script location="classpath:/org/abc/framework/blo/insert_base_tables.sql" />
-	</jdbc:initialize-database>
+	</jdbc:initialize-database> -->
 
 
 </beans>
