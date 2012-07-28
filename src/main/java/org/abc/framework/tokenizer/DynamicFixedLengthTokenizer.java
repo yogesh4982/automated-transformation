@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.abc.framework.bean.InterfaceConfigurationBean;
-import org.abc.framework.bean.common.SourcePositionComaparator;
+import org.abc.framework.bean.SourcePositionComaparator;
 import org.springframework.batch.item.file.transform.FixedLengthTokenizer;
 import org.springframework.batch.item.file.transform.Range;
 import org.springframework.beans.factory.InitializingBean;
