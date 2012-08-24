@@ -17,7 +17,7 @@ public class MapPreparedStatementSetter
 	// contains field id as key and corresponding Configuration record as value
 	private Map<String, InterfaceConfigurationBean> fieldIdToConfigBean;
 
-	private Logger logger = Logger.getLogger(MapPreparedStatementSetter.class);
+	private Logger logger = Logger.getLogger(MapPreparedStatementSetter.class); 
 
 	/**
 	 * This method receives a flat record of AttributesBean it sets values to
